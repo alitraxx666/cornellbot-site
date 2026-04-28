@@ -1,33 +1,165 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>CornellBot</title>
-  <style>
-    body {
-      background: #0a0a0a;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding-top: 100px;
-    }
-    input {
-      width: 300px;
-      padding: 10px;
-      font-size: 16px;
-    }
-    button {
-      padding: 10px;
-      font-size: 16px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cornell Bot • Physics & Engineering</title>
+<style>
+body {
+margin: 0;
+padding: 0;
+font-family: 'Segoe UI', system-ui, sans-serif;
+background: linear-gradient(135deg, #0f172a, #1e2937);
+color: #e2e8f0;
+min-height: 100vh;
+}
+.container {
+max-width: 800px;
+margin: 0 auto;
+padding: 2rem;
+}
+header {
+text-align: center;
+margin-bottom: 3rem;
+}
+h1 {
+font-size: 3rem;
+margin: 0;
+color: #60a5fa;
+letter-spacing: 2px;
+}
+.tagline {
+color: #94a3b8;
+font-size: 1.2rem;
+margin-top: 0.5rem;
+}
+.chat-container {
+background: rgba(15, 23, 42, 0.8);
+border-radius: 16px;
+border: 1px solid #334155;
+height: 65vh;
+display: flex;
+flex-direction: column;
+}
+.messages {
+flex: 1;
+padding: 1.5rem;
+overflow-y: auto;
+}
+.message {
+margin-bottom: 1rem;
+padding: 12px 16px;
+border-radius: 12px;
+max-width: 80%;
+}
+.user {
+background: #3b82f6;
+align-self: flex-end;
+margin-left: auto;
+}
+.bot {
+background: #1e2937;
+align-self: flex-start;
+}
+.input-area {
+display: flex;
+padding: 1rem;
+background: #1e2937;
+border-top: 1px solid #334155;
+}
+input {
+flex: 1;
+padding: 14px;
+border: none;
+border-radius: 8px;
+background: #334155;
+color: white;
+font-size: 1rem;
+}
+button {
+margin-left: 10px;
+padding: 0 24px;
+background: #60a5fa;
+color: black;
+border: none;
+border-radius: 8px;
+font-weight: bold;
+cursor: pointer;
+}
+.roman {
+font-size: 0.9rem;
+color: #64748b;
+text-align: center;
+margin-top: 2rem;
+}
+</style>
 </head>
 <body>
+<div class="container">
+<header>
+<h1>CORNELL BOT</h1>
+<p class="tagline">Physics & Engineering • Inspired by Vitruvius</p>
+</header>
 
-  <h1>CornellBot</h1>
-  <p>AI Chat (coming online soon)</p>
+<div class="chat-container">
+<div class="messages" id="messages">
+<div class="message bot">
+Greetings. I am Cornell Bot. Ask me anything about physics or engineering.
+</div>
+</div>
+<div class="input-area">
+<input type="text" id="userInput" placeholder="Ask a physics or engineering question...">
+<button onclick="sendMessage()">Send</button>
+</div>
+</div>
 
-  <input type="text" placeholder="Ask something..." />
-  <button>Send</button>
+<p class="roman">"The engineer should be mindful of both science and craft."</p>
+</div>
 
+<script>
+const messages = document.getElementById('messages');
+const input = document.getElementById('userInput');
+
+function addMessage(text, type) {
+const div = document.createElement('div');
+div.className = `message ${type}`;
+div.textContent = text;
+messages.appendChild(div);
+messages.scrollTop = messages.scrollHeight;
+}
+
+async function sendMessage() {
+const text = input.value.trim();
+if (!text) return;
+
+addMessage(text, 'user');
+input.value = '';
+
+addMessage("Thinking...", 'bot');
+
+try {
+const res = await fetch('http://localhost:11434/api/generate', {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({
+model: "cornellbot",
+prompt: text,
+stream: false
+})
+});
+
+const data = await res.json();
+messages.lastChild.remove();
+addMessage(data.response || "Sorry, I couldn't process that.", 'bot');
+} catch (err) {
+messages.lastChild.remove();
+addMessage("Cannot connect to local AI. Make sure Ollama is running.", 'bot');
+}
+}
+
+input.addEventListener("keypress", function(e) {
+if (e.key === "Enter") sendMessage();
+});
+</script>
 </body>
 </html>
