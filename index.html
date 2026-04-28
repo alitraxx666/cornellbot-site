@@ -86,12 +86,6 @@ border-radius: 8px;
 font-weight: bold;
 cursor: pointer;
 }
-.roman {
-font-size: 0.9rem;
-color: #64748b;
-text-align: center;
-margin-top: 2rem;
-}
 </style>
 </head>
 <body>
@@ -112,8 +106,6 @@ Greetings. I am Cornell Bot. Ask me anything about physics or engineering.
 <button onclick="sendMessage()">Send</button>
 </div>
 </div>
-
-<p class="roman">"The engineer should be mindful of both science and craft."</p>
 </div>
 
 <script>
@@ -138,11 +130,10 @@ input.value = '';
 addMessage("Thinking...", 'bot');
 
 try {
-const res = await fetch('https://cornellbot.ngrok-free.dev/api/generate', {
+const res = await fetch('http://localhost:11434/api/generate', {
 method: 'POST',
 headers: {
-'Content-Type': 'application/json',
-'ngrok-skip-browser-warning': 'true'
+'Content-Type': 'application/json'
 },
 body: JSON.stringify({
 model: "cornellbot",
@@ -156,7 +147,7 @@ messages.lastChild.remove();
 addMessage(data.response || "Sorry, I couldn't process that.", 'bot');
 } catch (err) {
 messages.lastChild.remove();
-addMessage("Cannot connect to local AI. Make sure Ollama and ngrok are both running.", 'bot');
+addMessage("Cannot connect to Ollama. Make sure Ollama is running on this computer.", 'bot');
 }
 }
 
