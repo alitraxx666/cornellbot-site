@@ -140,7 +140,10 @@ addMessage("Thinking...", 'bot');
 try {
 const res = await fetch('https://reformat-mounting-plasma.ngrok-free.dev/api/generate', {
 method: 'POST',
-headers: {'Content-Type': 'application/json'},
+headers: {
+'Content-Type': 'application/json',
+'ngrok-skip-browser-warning': 'true'
+},
 body: JSON.stringify({
 model: "cornellbot",
 prompt: text,
@@ -153,7 +156,7 @@ messages.lastChild.remove();
 addMessage(data.response || "Sorry, I couldn't process that.", 'bot');
 } catch (err) {
 messages.lastChild.remove();
-addMessage("Cannot connect to local AI. Make sure Ollama is running.", 'bot');
+addMessage("Cannot connect to local AI. Make sure Ollama and ngrok are both running.", 'bot');
 }
 }
 
