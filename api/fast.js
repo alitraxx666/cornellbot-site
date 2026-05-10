@@ -32,7 +32,10 @@ ${req.body.prompt}
     }
 
     res.status(200).json({
-      response: data.output_text || "No response from OpenAI"
+      response:
+  data.output_text ||
+  data.output?.[0]?.content?.[0]?.text ||
+  "No response from OpenAI"
     });
 
   } catch (error) {
