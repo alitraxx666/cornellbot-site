@@ -62,10 +62,68 @@ h1 {
   color: #a3a3a3;
 }
 
+.mode-panel {
+  border-top: 1px solid #272727;
+  padding-top: 24px;
+  margin-bottom: 24px;
+}
+
+.mode-title {
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #777;
+  margin-bottom: 14px;
+}
+
+.mode-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  max-width: 900px;
+}
+
+.mode-card {
+  background: #0d0d0d;
+  border: 1px solid #2a2a2a;
+  color: #f5f5f0;
+  padding: 18px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mode-card.active {
+  border-color: #ffffff;
+  background: #151515;
+}
+
+.mode-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+
+.mode-card p {
+  margin: 0;
+  color: #999;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
 .chat {
   margin-top: auto;
   border-top: 1px solid #272727;
   padding-top: 28px;
+}
+
+.status {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  background: #0d0d0d;
+  border: 1px solid #242424;
+  color: #a3a3a3;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .messages {
@@ -117,7 +175,7 @@ input:focus {
   border-color: #ffffff;
 }
 
-button {
+button.send-button {
   padding: 0 28px;
   font-size: 15px;
   font-weight: 700;
@@ -129,7 +187,7 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+button.send-button:hover {
   background: #d8d8d8;
 }
 
@@ -146,11 +204,15 @@ button:hover {
     padding: 28px;
   }
 
+  .mode-buttons {
+    grid-template-columns: 1fr;
+  }
+
   .input-area {
     flex-direction: column;
   }
 
-  button {
+  button.send-button {
     padding: 16px;
   }
 }
@@ -176,7 +238,33 @@ button:hover {
     </div>
   </section>
 
+  <section class="mode-panel">
+    <div class="mode-title">Choose Interface</div>
+
+    <div class="mode-buttons">
+      <button class="mode-card active" id="fastMode" onclick="setMode('fast')">
+        <h3>Fast Engineering Tutor</h3>
+        <p>
+          Best for live demos, classroom use, and quick physics explanations.
+          Designed to respond quickly and clearly.
+        </p>
+      </button>
+
+      <button class="mode-card" id="selfMode" onclick="setMode('self')">
+        <h3>Self-Hosted CornellBot</h3>
+        <p>
+          Experimental AI running on Nicholas’s Vultr/Ollama CPU server.
+          Please be patient — self-hosted CPU inference can be slow.
+        </p>
+      </button>
+    </div>
+  </section>
+
   <section class="chat">
+    <div class="status" id="status">
+      Fast Engineering Tutor selected. Use this mode for a polished live demo.
+    </div>
+
     <div class="messages" id="messages">
       <div class="message bot">
         CornellBot online. Ask an engineering, physics, or systems design question.
@@ -185,11 +273,11 @@ button:hover {
 
     <div class="input-area">
       <input id="input" placeholder="Ask CornellBot..." />
-      <button onclick="send()">Send</button>
+      <button class="send-button" onclick="send()">Send</button>
     </div>
 
     <div class="footer">
-      Self-hosted AI inference · Vultr · Ollama · Vercel
+      Fast demo mode · Self-hosted Vultr/Ollama mode · Vercel · GitHub
     </div>
   </section>
 
@@ -198,6 +286,28 @@ button:hover {
 <script>
 const messages = document.getElementById('messages');
 const input = document.getElementById('input');
+const statusBox = document.getElementById('status');
+const fastModeButton = document.getElementById('fastMode');
+const selfModeButton = document.getElementById('selfMode');
+
+let currentMode = 'fast';
+
+function setMode(mode) {
+  currentMode = mode;
+
+  fastModeButton.classList.remove('active');
+  selfModeButton.classList.remove('active');
+
+  if (mode === 'fast') {
+    fastModeButton.classList.add('active');
+    statusBox.textContent = 'Fast Engineering Tutor selected. Use this mode for a polished live demo.';
+    add('Fast Engineering Tutor mode selected.', 'bot');
+  } else {
+    selfModeButton.classList.add('active');
+    statusBox.textContent = 'Self-Hosted CornellBot selected. This runs through the Vultr/Ollama CPU server and may take longer to respond.';
+    add('Self-Hosted CornellBot mode selected. Please allow extra response time.', 'bot');
+  }
+}
 
 function add(text, type) {
   const msg = document.createElement('div');
@@ -216,11 +326,17 @@ async function send() {
 
   const thinking = document.createElement('div');
   thinking.className = 'message bot';
-  thinking.textContent = 'Thinking...';
+  thinking.textContent = currentMode === 'fast'
+    ? 'Thinking...'
+    : 'Thinking through the self-hosted Vultr/Ollama server. This may take a little longer...';
+
   messages.appendChild(thinking);
+  messages.scrollTop = messages.scrollHeight;
+
+  const endpoint = currentMode === 'fast' ? '/api/fast' : '/api/chat';
 
   try {
-    const res = await fetch('/api/chat', {
+    const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
