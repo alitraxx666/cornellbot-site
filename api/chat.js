@@ -18,13 +18,19 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    if (data.error) {
+      return res.status(500).json({
+        response: "Ollama error: " + data.error
+      });
+    }
+
     res.status(200).json({
-      response: data.response
+      response: data.response || JSON.stringify(data)
     });
 
   } catch (error) {
     res.status(500).json({
-      error: error.message
+      response: "Server error: " + error.message
     });
   }
 }
