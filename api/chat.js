@@ -10,7 +10,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "llama3:latest",
+        model: "llama3.2:1b",
         prompt: req.body.prompt,
         stream: false
       })
