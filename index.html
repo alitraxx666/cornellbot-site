@@ -1,104 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cornell Bot</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CornellBot</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #0f172a, #1e2937);
-  color: #e2e8f0;
+* {
+  box-sizing: border-box;
 }
 
-.container {
-  max-width: 800px;
-  margin: auto;
-  padding: 2rem;
+body {
+  margin: 0;
+  font-family: Inter, Helvetica, Arial, sans-serif;
+  background: #050505;
+  color: #f5f5f0;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero {
+  max-width: 1100px;
+  margin-bottom: 48px;
+}
+
+.label {
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8a8a8a;
+  margin-bottom: 24px;
 }
 
 h1 {
-  text-align: center;
-  color: #60a5fa;
+  margin: 0;
+  font-size: clamp(64px, 11vw, 150px);
+  line-height: 0.9;
+  letter-spacing: -0.08em;
+  font-weight: 800;
+}
+
+.subtitle {
+  margin-top: 28px;
+  max-width: 720px;
+  font-size: clamp(24px, 4vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+}
+
+.description {
+  margin-top: 24px;
+  max-width: 620px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #a3a3a3;
 }
 
 .chat {
-  background: #0f172a;
-  border: 1px solid #334155;
-  border-radius: 12px;
-  height: 65vh;
-  display: flex;
-  flex-direction: column;
+  margin-top: auto;
+  border-top: 1px solid #272727;
+  padding-top: 28px;
 }
 
 .messages {
-  flex: 1;
+  min-height: 260px;
+  max-height: 42vh;
   overflow-y: auto;
-  padding: 1rem;
   display: flex;
   flex-direction: column;
+  gap: 14px;
+  padding-bottom: 24px;
 }
 
 .message {
-  margin-bottom: 10px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  max-width: 75%;
+  max-width: 760px;
+  padding: 16px 18px;
+  font-size: 17px;
+  line-height: 1.45;
+  border: 1px solid #242424;
 }
 
 .user {
-  background: #3b82f6;
   align-self: flex-end;
+  background: #ffffff;
+  color: #050505;
 }
 
 .bot {
-  background: #1e2937;
+  align-self: flex-start;
+  background: #0d0d0d;
+  color: #f5f5f0;
 }
 
 .input-area {
   display: flex;
-  padding: 10px;
-  border-top: 1px solid #334155;
+  gap: 12px;
 }
 
 input {
   flex: 1;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background: #334155;
-  color: white;
+  padding: 18px;
+  font-size: 17px;
+  background: #0d0d0d;
+  color: #ffffff;
+  border: 1px solid #2f2f2f;
+  outline: none;
+}
+
+input:focus {
+  border-color: #ffffff;
 }
 
 button {
-  margin-left: 10px;
-  padding: 0 20px;
+  padding: 0 28px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   border: none;
-  border-radius: 8px;
-  background: #60a5fa;
+  background: #ffffff;
+  color: #050505;
   cursor: pointer;
-  font-weight: bold;
+}
+
+button:hover {
+  background: #d8d8d8;
+}
+
+.footer {
+  margin-top: 18px;
+  font-size: 12px;
+  color: #666;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 700px) {
+  .page {
+    padding: 28px;
+  }
+
+  .input-area {
+    flex-direction: column;
+  }
+
+  button {
+    padding: 16px;
+  }
 }
 </style>
 </head>
 
 <body>
+<div class="page">
 
-<div class="container">
-  <h1>Cornell Bot</h1>
+  <section class="hero">
+    <div class="label">Engineering Intelligence System</div>
 
-  <div class="chat">
+    <h1>CORNELLBOT</h1>
+
+    <div class="subtitle">
+      Physics-first AI for engineering and systems design.
+    </div>
+
+    <div class="description">
+      Inspired by Vitruvius, classical engineering thought, scientific reasoning,
+      and modern computational systems. Built to help reason through physics,
+      engineering, design, infrastructure, and technical problem solving.
+    </div>
+  </section>
+
+  <section class="chat">
     <div class="messages" id="messages">
-      <div class="message bot">Hello. I am Cornell Bot.</div>
+      <div class="message bot">
+        CornellBot online. Ask an engineering, physics, or systems design question.
+      </div>
     </div>
 
     <div class="input-area">
-      <input id="input" placeholder="Ask something..." />
+      <input id="input" placeholder="Ask CornellBot..." />
       <button onclick="send()">Send</button>
     </div>
-  </div>
+
+    <div class="footer">
+      Self-hosted AI inference · Vultr · Ollama · Vercel
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -141,7 +235,7 @@ async function send() {
 
   } catch (e) {
     thinking.remove();
-    add("Error connecting to Cornell Bot server.", 'bot');
+    add("Error connecting to CornellBot server.", 'bot');
     console.error(e);
   }
 }
