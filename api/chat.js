@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       },
       signal: controller.signal,
       body: JSON.stringify({
-        model: "llama3.2:1b",
+        model: "phi3:mini",
         prompt: `
 You are CornellBot, a physics-first AI for engineering and systems design.
 
