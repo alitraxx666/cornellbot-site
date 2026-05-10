@@ -4,22 +4,26 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-5.5",
-        input: `
-You are CornellBot, a physics-first AI for engineering and systems design.
-Answer clearly, intelligently, and concisely like an excellent engineering tutor.
-Use physics, scientific reasoning, and real engineering examples when helpful.
-
-User question:
-${req.body.prompt}
-`
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "You are CornellBot, a physics-first AI for engineering and systems design. Answer clearly, intelligently, and concisely like an excellent engineering tutor. Use physics principles, equations, and real engineering examples when helpful. Never say you are ChatGPT."
+          },
+          {
+            role: "user",
+            content: req.body.prompt
+          }
+        ],
+        max_tokens: 350,
+        temperature: 0.5
       })
     });
 
@@ -32,10 +36,7 @@ ${req.body.prompt}
     }
 
     res.status(200).json({
-      response:
-  data.output_text ||
-  data.output?.[0]?.content?.[0]?.text ||
-  "No response from OpenAI"
+      response: data.choices?.[0]?.message?.content || "No response from OpenAI"
     });
 
   } catch (error) {
